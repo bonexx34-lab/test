@@ -174,8 +174,8 @@ export default function LandingPage() {
           }`}
           data-testid="footer"
         >
-          <p className="text-[#C5C0B6] text-[11px] tracking-wide">
-            Patent-pending concept &amp; technology
+          <p className="text-[#9C9789] text-xs tracking-wide">
+            Protected concept &amp; technology &ensp;&middot;&ensp; Patent pending INPI &ensp;&middot;&ensp; 2026
           </p>
         </footer>
       </div>

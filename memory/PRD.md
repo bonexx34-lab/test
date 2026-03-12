@@ -23,14 +23,16 @@ Build a stunning, modern landing page for "CuratedCloset" — a platform for cre
 - Footer with curatedcloset.cc
 
 ## What's Been Implemented (Dec 2025)
-- Landing page with full hero section (headline, subheadline, tagline, body, CTA)
-- Email subscription (POST /api/subscribe) with duplicate detection
-- Admin page (/admin) with subscriber table
-- Excel export (GET /api/admin/subscribers/export)
-- Delete subscriber functionality
-- Sonner toast notifications
-- Manrope font, glassmorphism, staggered animations
-- All tests passing (100% backend, frontend, integration, mobile)
+- Landing page with exact copy: CuratedCloset headline, "for Creators & Brands", "CURATE. CONVERT.", baseline, keywords, "Join the guestlist →" CTA
+- Light cream theme (#F5F0EB) with Inter font, gold accents, glassmorphism CTA card
+- Invisible admin link (opacity:0, still clickable)
+- Email subscription with duplicate detection
+- Password-protected admin page (curatedcloset2025)
+- Analytics dashboard: total visits, subscribers, conversion rate
+- Excel export + subscriber management
+- Visit tracking on page load
+- Footer: "Patent-pending concept & technology"
+- All tests passing (100% backend, frontend, integration, mobile, copy)
 
 ## Prioritized Backlog
 ### P0 (Critical) - Done

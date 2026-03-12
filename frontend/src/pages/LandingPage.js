@@ -10,6 +10,7 @@ export default function LandingPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -24,7 +25,7 @@ export default function LandingPage() {
     try {
       const res = await axios.post(`${API}/subscribe`, { email: email.trim() });
       if (res.data.success) {
-        toast.success(res.data.message);
+        setSubmitted(true);
         setEmail("");
       } else {
         toast.error(res.data.message);
@@ -126,35 +127,42 @@ export default function LandingPage() {
 
             {/* CTA Glass Card */}
             <div
-              className={`glass-card rounded-2xl p-5 md:p-6 max-w-md mx-auto ${
+              className={`glass-card rounded-2xl p-6 md:p-8 max-w-lg mx-auto ${
                 mounted ? "animate-fade-in-up animate-delay-600" : "opacity-0"
               }`}
               data-testid="cta-card"
             >
-              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="flex-1 bg-[#F5F0EB]/60 border border-[#E2DDD5] text-[#1A1A1A] placeholder:text-[#B8B3A6] rounded-full px-5 py-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#B4983A]/30 focus:border-[#B4983A]/20 transition-shadow duration-300"
-                  data-testid="email-input"
-                  required
-                  disabled={loading}
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="inline-flex items-center justify-center gap-1.5 bg-[#1A1A1A] text-white rounded-full px-6 py-3.5 text-sm font-semibold hover:brightness-125 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                  data-testid="submit-button"
-                >
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Join the guestlist \u2192"
-                  )}
-                </button>
-              </form>
+              {submitted ? (
+                <div className="text-center py-2" data-testid="thank-you-state">
+                  <p className="text-[#1A1A1A] font-semibold text-base mb-1">You're on the list.</p>
+                  <p className="text-[#8A857C] text-sm">We'll be in touch soon.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="w-full bg-[#F5F0EB]/60 border border-[#E2DDD5] text-[#1A1A1A] placeholder:text-[#B8B3A6] rounded-full px-5 py-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#B4983A]/30 focus:border-[#B4983A]/20 transition-shadow duration-300"
+                    data-testid="email-input"
+                    required
+                    disabled={loading}
+                  />
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full inline-flex items-center justify-center gap-1.5 bg-[#1A1A1A] text-white rounded-full px-6 py-3.5 text-sm font-semibold hover:brightness-125 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    data-testid="submit-button"
+                  >
+                    {loading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      "Join the guestlist \u2192"
+                    )}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </main>

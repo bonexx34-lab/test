@@ -138,13 +138,13 @@ export default function LandingPage() {
                   <p className="text-[#8A857C] text-sm">We'll be in touch soon.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <form onSubmit={handleSubmit} className="flex flex-row gap-3 items-center">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full bg-[#F5F0EB]/60 border border-[#E2DDD5] text-[#1A1A1A] placeholder:text-[#B8B3A6] rounded-full px-5 py-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#B4983A]/30 focus:border-[#B4983A]/20 transition-shadow duration-300"
+                    className="flex-1 min-w-0 bg-[#F5F0EB]/60 border border-[#E2DDD5] text-[#1A1A1A] placeholder:text-[#B8B3A6] rounded-full px-5 py-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#B4983A]/30 focus:border-[#B4983A]/20 transition-shadow duration-300"
                     data-testid="email-input"
                     required
                     disabled={loading}
@@ -152,7 +152,7 @@ export default function LandingPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full inline-flex items-center justify-center gap-1.5 bg-[#1A1A1A] text-white rounded-full px-6 py-3.5 text-sm font-semibold hover:brightness-125 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="shrink-0 inline-flex items-center justify-center gap-1.5 bg-[#1A1A1A] text-white rounded-full px-5 py-3.5 text-sm font-semibold hover:brightness-125 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                     data-testid="submit-button"
                   >
                     {loading ? (

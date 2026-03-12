@@ -169,7 +169,7 @@ export default function LandingPage() {
 
         {/* Footer */}
         <footer
-          className={`px-6 md:px-12 py-10 text-center ${
+          className={`px-6 md:px-12 py-6 text-center ${
             mounted ? "animate-fade-in animate-delay-800" : "opacity-0"
           }`}
           data-testid="footer"

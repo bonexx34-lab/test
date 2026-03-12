@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -21,6 +21,8 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin')
+
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
@@ -42,6 +44,16 @@ class SubscribeResponse(BaseModel):
     message: str
 
 
+class AdminLoginRequest(BaseModel):
+    password: str
+
+
+class PageVisit(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    page: str = "landing"
+    visited_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+
 # Routes
 @api_router.get("/")
 async def root():
@@ -60,10 +72,37 @@ async def subscribe(req: SubscribeRequest):
     return SubscribeResponse(success=True, message="Welcome to CuratedCloset!")
 
 
+@api_router.post("/track-visit")
+async def track_visit():
+    visit = PageVisit()
+    doc = visit.model_dump()
+    await db.visits.insert_one(doc)
+    return {"success": True}
+
+
+@api_router.post("/admin/login")
+async def admin_login(req: AdminLoginRequest):
+    if req.password == ADMIN_PASSWORD:
+        return {"success": True, "message": "Authenticated"}
+    raise HTTPException(status_code=401, detail="Invalid password")
+
+
 @api_router.get("/admin/subscribers")
 async def get_subscribers():
     subscribers = await db.subscribers.find({}, {"_id": 0}).sort("subscribed_at", -1).to_list(10000)
     return {"subscribers": subscribers, "total": len(subscribers)}
+
+
+@api_router.get("/admin/analytics")
+async def get_analytics():
+    total_visits = await db.visits.count_documents({})
+    total_subscribers = await db.subscribers.count_documents({})
+    conversion_rate = (total_subscribers / total_visits * 100) if total_visits > 0 else 0
+    return {
+        "total_visits": total_visits,
+        "total_subscribers": total_subscribers,
+        "conversion_rate": round(conversion_rate, 2)
+    }
 
 
 @api_router.get("/admin/subscribers/export")
@@ -78,7 +117,6 @@ async def export_subscribers():
     for sub in subscribers:
         ws.append([sub.get("email", ""), sub.get("subscribed_at", "")])
 
-    # Auto-width columns
     for col in ws.columns:
         max_length = 0
         col_letter = col[0].column_letter

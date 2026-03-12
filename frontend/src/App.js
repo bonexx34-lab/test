@@ -8,14 +8,14 @@ function App() {
   return (
     <div>
       <Toaster
-        theme="dark"
+        theme="light"
         position="top-center"
         toastOptions={{
           style: {
-            background: '#0A0A0A',
-            border: '1px solid rgba(255,255,255,0.08)',
-            color: '#F5F5F7',
-            fontFamily: 'Manrope, sans-serif',
+            background: '#FFFFFF',
+            border: '1px solid rgba(0,0,0,0.06)',
+            color: '#1A1A1A',
+            fontFamily: 'Inter, sans-serif',
           },
         }}
       />

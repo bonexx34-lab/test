@@ -134,6 +134,68 @@ class CuratedClosetAPITester:
             self.log_test("Delete Subscriber", False, str(e))
             return False
     
+    def test_track_visit(self):
+        """Test tracking page visits"""
+        try:
+            response = requests.post(f"{self.base_url}/track-visit", timeout=10)
+            success = response.status_code == 200 and response.json().get("success", False)
+            details = f"Status: {response.status_code}, Response: {response.json()}"
+            self.log_test("Track Visit", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Track Visit", False, str(e))
+            return False
+    
+    def test_admin_login_correct_password(self):
+        """Test admin login with correct password"""
+        try:
+            response = requests.post(
+                f"{self.base_url}/admin/login",
+                json={"password": "curatedcloset2025"},
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            success = response.status_code == 200 and response.json().get("success", False)
+            details = f"Status: {response.status_code}, Response: {response.json()}"
+            self.log_test("Admin Login (Correct Password)", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Admin Login (Correct Password)", False, str(e))
+            return False
+    
+    def test_admin_login_wrong_password(self):
+        """Test admin login with wrong password"""
+        try:
+            response = requests.post(
+                f"{self.base_url}/admin/login",
+                json={"password": "wrongpassword"},
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            success = response.status_code == 401  # Should return 401 Unauthorized
+            details = f"Status: {response.status_code}, Response: {response.text}"
+            self.log_test("Admin Login (Wrong Password)", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Admin Login (Wrong Password)", False, str(e))
+            return False
+    
+    def test_get_analytics(self):
+        """Test getting analytics data"""
+        try:
+            response = requests.get(f"{self.base_url}/admin/analytics", timeout=10)
+            success = (response.status_code == 200 and 
+                      "total_visits" in response.json() and
+                      "total_subscribers" in response.json() and
+                      "conversion_rate" in response.json())
+            analytics = response.json() if success else {}
+            details = f"Status: {response.status_code}, Analytics: {analytics}"
+            self.log_test("Get Analytics", success, details)
+            return success, analytics if success else None
+        except Exception as e:
+            self.log_test("Get Analytics", False, str(e))
+            return False, None
+    
     def run_all_tests(self):
         """Run all API tests"""
         print(f"🚀 Starting CuratedCloset API Tests")
@@ -161,7 +223,21 @@ class CuratedClosetAPITester:
         # Test 6: Export functionality
         self.test_export_subscribers()
         
-        # Test 7: Delete subscriber (if we have subscribers)
+        # Test 7: Track visit
+        self.test_track_visit()
+        
+        # Test 8: Admin login with correct password
+        self.test_admin_login_correct_password()
+        
+        # Test 9: Admin login with wrong password
+        self.test_admin_login_wrong_password()
+        
+        # Test 10: Get analytics
+        analytics_success, analytics_data = self.test_get_analytics()
+        if analytics_success and analytics_data:
+            print(f"   📈 Analytics: {analytics_data['total_visits']} visits, {analytics_data['total_subscribers']} subscribers, {analytics_data['conversion_rate']}% conversion")
+        
+        # Test 11: Delete subscriber (if we have subscribers)
         if success and subscribers_data and len(subscribers_data.get("subscribers", [])) > 0:
             # Try to delete a subscriber (use the first one)
             subscriber_id = subscribers_data["subscribers"][0].get("id")
